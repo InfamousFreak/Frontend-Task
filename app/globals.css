@@ -6,8 +6,8 @@
 
 @theme inline {
   --font-heading: var(--font-sans);
-  --font-sans: var(--font-geist-sans), 'Geist Fallback';
-  --font-mono: var(--font-geist-mono), 'Geist Mono Fallback';
+  --font-sans: var(--font-inter), Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -167,3 +167,62 @@
     @apply font-sans;
   }
 }
+
+/* ── Ant Design table overrides ─────────────────────────────── */
+.ctc-table .ant-table-thead > tr > th {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: #9ca3af !important;
+  background: #f8f9fa !important;
+  border-bottom: 1px solid #e9ecef !important;
+  white-space: nowrap;
+}
+
+.ctc-table .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #e9ecef !important;
+  vertical-align: top !important;
+}
+
+.ctc-table .ant-table-tbody > tr:last-child > td {
+  border-bottom: none !important;
+}
+
+/* Choose Tag select — compact ghost style */
+.choose-tag-select .ant-select-selector {
+  border-color: #d1d5db !important;
+  border-radius: 6px !important;
+  background: #f9fafb !important;
+  font-size: 12px !important;
+  height: 28px !important;
+  padding: 0 8px !important;
+}
+
+.choose-tag-select .ant-select-selection-placeholder {
+  font-size: 12px !important;
+  color: #6b7280 !important;
+  line-height: 26px !important;
+}
+
+/* ECOPY icon button */
+.ecopy-btn {
+  border: 1px solid #e9ecef !important;
+  border-radius: 6px !important;
+  color: #4a2b4d !important;
+  background: #f9f5fa !important;
+}
+
+.ecopy-btn:hover {
+  background: #ede6ee !important;
+  border-color: #4a2b4d !important;
+}
+
+/* Scrollbar thin */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
