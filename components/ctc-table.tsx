@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Table, Select, Button, Upload, Modal, Checkbox, Avatar } from "antd";
+import { Table, Select, Button, Upload, Modal, Checkbox, Avatar, Tabs } from "antd";
 import type { TableColumnsType } from "antd";
 import type { UploadProps } from "antd";
 import {
@@ -361,6 +361,155 @@ function AssignPersonnelModal({ open, onClose }: { open: boolean; onClose: () =>
   );
 }
 
+// ─── View Order Modal (triggered by "View" button) ───────────────────────────
+
+const TIMELINE_ROWS = [
+  { label: "Order ID:", value: "2298" },
+  { label: "Tracking ID:", value: "EL767335963IN" },
+  { label: "Payment completed:", value: "27 Feb 2026 01:54 PM" },
+  { label: "Order placed:", value: "27 Feb 2026 02:01 PM" },
+  { label: "Assigned:", value: "3 Mar 2026 05:35 PM" },
+  { label: "Applied:", value: "26 Mar 2026 10:45 AM" },
+  { label: "Dispatched:", value: "27 Feb 2026 01:54 PM" },
+  { label: "Delivered:", value: "30 Mar 2026 06:03 PM" },
+];
+
+function InfoCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="bg-[#F8F9FA] rounded-xl border border-[#E9ECEF] px-6 py-5 flex flex-col gap-3">
+      {children}
+    </div>
+  );
+}
+
+function InfoRow({ label, value, link }: { label: string; value: string; link?: boolean }) {
+  return (
+    <div className="flex gap-4">
+      <span className="text-[13px] text-[#9CA3AF] w-44 shrink-0">{label}</span>
+      {link ? (
+        <a href="#" className="text-[13px] font-medium text-blue-500 hover:underline">{value}</a>
+      ) : (
+        <span className="text-[13px] font-semibold text-[#1A1A1A]">{value}</span>
+      )}
+    </div>
+  );
+}
+
+function ViewOrderModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  function copyAddress() {
+    navigator.clipboard.writeText("682028, 67/67A flat no D 1st floor, attaniyathu road vennal, kochi, kochi, kerala, India").catch(() => {});
+  }
+
+  const tabItems = [
+    {
+      key: "case",
+      label: "Case & Customer Details",
+      children: (
+        <InfoCard>
+          <InfoRow label="Case Number:" value="OS/300179/2024" />
+          <InfoRow label="Legal Name:" value="Anil philip" />
+          <InfoRow label="Name:" value="Anil philip" />
+          <InfoRow label="Email:" value="anilphilipka@gmail.com" />
+          <InfoRow label="Phone:" value="919495862301" />
+          <div className="flex gap-4">
+            <span className="text-[13px] text-[#9CA3AF] w-44 shrink-0">Delivery Feedback:</span>
+            <span className="text-[13px] text-[#1A1A1A]">• Issue: N/A</span>
+          </div>
+        </InfoCard>
+      ),
+    },
+    {
+      key: "address",
+      label: "Address",
+      children: (
+        <InfoCard>
+          <div className="flex items-start justify-between">
+            <div className="flex flex-col gap-3 flex-1">
+              <InfoRow label="Pincode:" value="682028" />
+              <InfoRow label="Address Line 1:" value="67/67A flat no D 1st floor" />
+              <InfoRow label="Address Line 2:" value="attaniyathu road vennal" />
+              <InfoRow label="City:" value="kochi" />
+              <InfoRow label="District:" value="kochi" />
+              <InfoRow label="State:" value="kerala" />
+              <InfoRow label="Country:" value="India" />
+            </div>
+            <Button
+              onClick={copyAddress}
+              icon={<CopyOutlined />}
+              size="small"
+              style={{ borderColor: "#DEE2E6", color: "#495057", fontSize: 12, borderRadius: 6, flexShrink: 0, marginTop: 2 }}
+            >
+              Copy Address
+            </Button>
+          </div>
+        </InfoCard>
+      ),
+    },
+    {
+      key: "products",
+      label: "Products",
+      children: (
+        <InfoCard>
+          <span className="text-[14px] font-bold text-[#1A1A1A] mb-1">Product 1</span>
+          <InfoRow label="Type:" value="judgement" />
+          <InfoRow label="Order Date:" value="attaniyathu road vennal" />
+          <InfoRow label="File:" value="N/A" link />
+        </InfoCard>
+      ),
+    },
+    {
+      key: "digio",
+      label: "Digio eSign Documents",
+      children: (
+        <InfoCard>
+          <span className="text-[14px] font-bold text-[#1A1A1A] mb-1">eSign 1</span>
+          <InfoRow label="Digio ID:" value="DID26022713594426862 5QRGSUK5WP37" />
+          <div className="flex gap-4">
+            <span className="text-[13px] text-[#9CA3AF] w-44 shrink-0">Status:</span>
+            <span className="text-[13px] font-bold text-[#1A1A1A]">Completed</span>
+          </div>
+          <InfoRow label="Signed Document:" value="View Signed Document" link />
+          <InfoRow label="Audit Log:" value="View Audit Log" link />
+        </InfoCard>
+      ),
+    },
+  ];
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      footer={null}
+      width={700}
+      centered
+      closeIcon={<CloseIcon />}
+      styles={{ body: { padding: "32px 36px 36px" } }}
+    >
+      <h2 className="text-[24px] font-bold text-[#1A1A1A] mb-6">Order Details</h2>
+
+      {/* Timeline rows */}
+      <div className="flex flex-col gap-3 mb-6">
+        {TIMELINE_ROWS.map((row) => (
+          <div key={row.label} className="flex gap-6">
+            <span className="text-[13px] text-[#9CA3AF] w-40 shrink-0">{row.label}</span>
+            <span className="text-[13px] font-semibold text-[#1A1A1A]">{row.value}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="border-t border-[#E9ECEF] mb-0" />
+
+      {/* Tabs */}
+      <Tabs
+        defaultActiveKey="case"
+        items={tabItems}
+        style={{ marginTop: 0 }}
+        tabBarStyle={{ marginBottom: 16 }}
+      />
+    </Modal>
+  );
+}
+
 // ─── Custom Pagination ────────────────────────────────────────────────────────
 
 function CustomPagination({
@@ -429,7 +578,7 @@ function CustomPagination({
   );
 }
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
+// ─── Mock Data ───────────────────────────────────���────────────────────────────
 
 const DEFAULT_TAGS: TagItem[] = [
   { id: "sub-pending", label: "Subscription Pending", color: "#4A7C7C", textColor: "#fff" },
@@ -472,6 +621,7 @@ export default function CTCTable() {
   const [currentPage, setCurrentPage] = useState(1);
   const [orderDetailsOpen, setOrderDetailsOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
 
   function handleTagsChange(rowKey: string, newTags: TagItem[]) {
     setData((prev) => prev.map((row) => (row.key === rowKey ? { ...row, tags: newTags } : row)));
@@ -573,7 +723,11 @@ export default function CTCTable() {
       width: 120,
       render: () => (
         <div className="flex flex-col gap-2">
-          <Button size="small" style={{ borderColor: "#DEE2E6", color: "#495057", fontWeight: 500 }}>
+          <Button
+            size="small"
+            onClick={() => setViewOpen(true)}
+            style={{ borderColor: "#DEE2E6", color: "#495057", fontWeight: 500 }}
+          >
             View
           </Button>
           <Button size="small" icon={<EyeOutlined />} style={{ borderColor: "#DEE2E6", color: "#495057", fontWeight: 500 }}>
@@ -615,6 +769,7 @@ export default function CTCTable() {
     <>
       <OrderDetailsModal open={orderDetailsOpen} onClose={() => setOrderDetailsOpen(false)} />
       <AssignPersonnelModal open={assignOpen} onClose={() => setAssignOpen(false)} />
+      <ViewOrderModal open={viewOpen} onClose={() => setViewOpen(false)} />
 
       <div className="relative bg-white rounded-lg border border-[#E9ECEF] overflow-hidden">
         <Table<OrderRecord>
