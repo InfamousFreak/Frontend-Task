@@ -97,30 +97,24 @@ function TagCell({
 
   return (
     <div className="flex flex-col gap-2 min-w-[180px]">
-      <div className="flex gap-2">
-        <Select
-          placeholder={
-            <span className="text-[12px] text-[#6B7280] flex items-center gap-1">
-              Choose Tag <DownOutlined style={{ fontSize: 10 }} />
-            </span>
-          }
-          size="small"
-          value={null}
-          onChange={(val: string) => addTag(val)}
-          options={ALL_TAG_OPTIONS.map((t) => ({ value: t.id, label: t.label }))}
-          style={{ width: "100%" }}
-          suffixIcon={null}
-          showSearch
-          className="choose-tag-select"
-        />
-        <Button
-          size="small"
-          onClick={onCreateTag}
-          style={{ borderColor: "#DEE2E6", color: "#495057", fontSize: 11, borderRadius: 4, whiteSpace: "nowrap" }}
-        >
-          +
-        </Button>
-      </div>
+      <Select
+        placeholder={
+          <span className="text-[12px] text-[#6B7280] flex items-center gap-1">
+            Choose Tag <DownOutlined style={{ fontSize: 10 }} />
+          </span>
+        }
+        size="small"
+        value={null}
+        onChange={(val: string) => val === "create-new" ? onCreateTag?.() : addTag(val)}
+        options={[
+          { value: "create-new", label: "Create New Tag", disabled: false },
+          ...ALL_TAG_OPTIONS.map((t) => ({ value: t.id, label: t.label })),
+        ]}
+        style={{ width: "100%" }}
+        suffixIcon={null}
+        showSearch
+        className="choose-tag-select"
+      />
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
           <div key={tag.id} className="relative inline-flex">
