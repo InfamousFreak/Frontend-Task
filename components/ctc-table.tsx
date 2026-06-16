@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Table, Select, Button, Upload, Modal, Checkbox, Avatar, Tabs } from "antd";
+import { Table, Select, Button, Upload, Modal, Checkbox, Avatar, Tabs, Input } from "antd";
 import type { TableColumnsType } from "antd";
 import type { UploadProps } from "antd";
 import {
@@ -79,10 +79,12 @@ function TagCell({
   rowKey,
   tags,
   onTagsChange,
+  onCreateTag,
 }: {
   rowKey: string;
   tags: TagItem[];
   onTagsChange: (rowKey: string, tags: TagItem[]) => void;
+  onCreateTag?: () => void;
 }) {
   function removeTag(id: string) {
     onTagsChange(rowKey, tags.filter((t) => t.id !== id));
@@ -95,21 +97,30 @@ function TagCell({
 
   return (
     <div className="flex flex-col gap-2 min-w-[180px]">
-      <Select
-        placeholder={
-          <span className="text-[12px] text-[#6B7280] flex items-center gap-1">
-            Choose Tag <DownOutlined style={{ fontSize: 10 }} />
-          </span>
-        }
-        size="small"
-        value={null}
-        onChange={(val: string) => addTag(val)}
-        options={ALL_TAG_OPTIONS.map((t) => ({ value: t.id, label: t.label }))}
-        style={{ width: "100%" }}
-        suffixIcon={null}
-        showSearch
-        className="choose-tag-select"
-      />
+      <div className="flex gap-2">
+        <Select
+          placeholder={
+            <span className="text-[12px] text-[#6B7280] flex items-center gap-1">
+              Choose Tag <DownOutlined style={{ fontSize: 10 }} />
+            </span>
+          }
+          size="small"
+          value={null}
+          onChange={(val: string) => addTag(val)}
+          options={ALL_TAG_OPTIONS.map((t) => ({ value: t.id, label: t.label }))}
+          style={{ width: "100%" }}
+          suffixIcon={null}
+          showSearch
+          className="choose-tag-select"
+        />
+        <Button
+          size="small"
+          onClick={onCreateTag}
+          style={{ borderColor: "#DEE2E6", color: "#495057", fontSize: 11, borderRadius: 4, whiteSpace: "nowrap" }}
+        >
+          +
+        </Button>
+      </div>
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
           <div key={tag.id} className="relative inline-flex">
@@ -279,7 +290,7 @@ const MOCK_CLERKS = [
   { id: "3", name: "Shaman" },
 ];
 
-function AssignPersonnelModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+function AssignPersonnelModal({ open, onClose, onAddNew }: { open: boolean; onClose: () => void; onAddNew?: () => void }) {
   const [selected, setSelected] = useState<string[]>([]);
   const [moreClerks, setMoreClerks] = useState<string | undefined>(undefined);
 
@@ -306,6 +317,7 @@ function AssignPersonnelModal({ open, onClose }: { open: boolean; onClose: () =>
       <div className="flex justify-end mb-3">
         <Button
           type="primary"
+          onClick={onAddNew}
           style={{ backgroundColor: "#4A2B4D", borderColor: "#4A2B4D", borderRadius: 8, fontWeight: 600 }}
         >
           + Add New
@@ -510,6 +522,171 @@ function ViewOrderModal({ open, onClose }: { open: boolean; onClose: () => void 
   );
 }
 
+// ─── Add Clerk Modal (triggered by "Add New" in AssignPersonnelModal) ─────────
+
+function AddClerkModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [clerkName, setClerkName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [clerkId, setClerkId] = useState("");
+
+  function handleSave() {
+    setClerkName("");
+    setPhone("");
+    setClerkId("");
+    onClose();
+  }
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      footer={null}
+      width={600}
+      centered
+      closeIcon={<CloseIcon />}
+      styles={{ body: { padding: "28px 32px 32px" } }}
+    >
+      <h2 className="text-[20px] font-bold text-[#1A1A1A] mb-2">Add Clerk</h2>
+      <p className="text-[13px] text-[#6B7280] mb-6">Add a new authorized person by providing details</p>
+
+      <div className="flex flex-col gap-4">
+        <div>
+          <label className="text-[13px] font-semibold text-[#1A1A1A] mb-1 block">
+            Clerk Name <span className="text-red-500">*</span>
+          </label>
+          <Input
+            value={clerkName}
+            onChange={(e) => setClerkName(e.target.value)}
+            placeholder="Gangadharan"
+            style={{ height: 40, borderRadius: 6 }}
+          />
+        </div>
+
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <label className="text-[13px] font-semibold text-[#1A1A1A] mb-1 block">
+              Phone Number <span className="text-red-500">*</span>
+            </label>
+            <Input
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              addonBefore="+91"
+              placeholder="9876543210"
+              style={{ height: 40, borderRadius: 6 }}
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="text-[13px] font-semibold text-[#1A1A1A] mb-1 block">
+            Clerk ID <span className="text-red-500">*</span>
+          </label>
+          <Input
+            value={clerkId}
+            onChange={(e) => setClerkId(e.target.value)}
+            placeholder="Enter Clerk ID"
+            style={{ height: 40, borderRadius: 6 }}
+          />
+        </div>
+      </div>
+
+      <div className="flex items-center justify-end gap-3 mt-8">
+        <Button onClick={onClose} style={{ borderRadius: 6, borderColor: "#DEE2E6", color: "#495057" }}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSave}
+          type="primary"
+          style={{ borderRadius: 6, backgroundColor: "#999999", borderColor: "#999999" }}
+        >
+          Add & Save
+        </Button>
+      </div>
+    </Modal>
+  );
+}
+
+// ─── Create New Tag Modal ──────────────────────────────────────────────────────
+
+const TAG_COLORS = ["#4A7C7C", "#7A5C5C", "#5C5B6E", "#5C6E6E", "#8B5E3C", "#3C6B5C", "#6B5A7D", "#C9A882", "#5C8B7D", "#6B5C7D", "#8B6B5C", "#4A2B4D"];
+
+function CreateNewTagModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [tagName, setTagName] = useState("");
+  const [selectedColor, setSelectedColor] = useState(TAG_COLORS[0]);
+
+  function handleAdd() {
+    setTagName("");
+    setSelectedColor(TAG_COLORS[0]);
+    onClose();
+  }
+
+  return (
+    <Modal
+      open={open}
+      onCancel={onClose}
+      footer={null}
+      width={480}
+      centered
+      closeIcon={<CloseIcon />}
+      styles={{ body: { padding: "28px 32px 32px" } }}
+    >
+      <h2 className="text-[18px] font-bold text-[#1A1A1A] mb-1">Support Tags</h2>
+      <p className="text-[13px] text-[#6B7280] mb-6">Create new tags here</p>
+
+      <div className="flex flex-col gap-4">
+        <div>
+          <label className="text-[13px] font-semibold text-[#1A1A1A] mb-2 block">New Tag Name</label>
+          <Input
+            value={tagName}
+            onChange={(e) => setTagName(e.target.value)}
+            placeholder="Enter Tag Name"
+            style={{ height: 40, borderRadius: 6 }}
+          />
+        </div>
+
+        <div>
+          <label className="text-[13px] font-semibold text-[#1A1A1A] mb-2 block">Choose Tag Color</label>
+          <div className="flex gap-2">
+            {TAG_COLORS.map((color) => (
+              <button
+                key={color}
+                onClick={() => setSelectedColor(color)}
+                className={`w-8 h-8 rounded-full border-2 transition-all ${selectedColor === color ? "border-[#1A1A1A]" : "border-transparent"}`}
+                style={{ backgroundColor: color }}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="text-[13px] font-semibold text-[#1A1A1A] mb-2 block">Preview</label>
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-flex items-center px-3 py-1.5 rounded-full text-[12px] font-medium text-white"
+              style={{ backgroundColor: selectedColor }}
+            >
+              {tagName || "Preview"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-3 mt-8">
+        <Button onClick={onClose} style={{ borderRadius: 999, borderColor: "#DEE2E6", color: "#495057", minWidth: 100 }}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleAdd}
+          type="primary"
+          style={{ borderRadius: 999, backgroundColor: "#999999", borderColor: "#999999", minWidth: 120 }}
+        >
+          Add Tag
+        </Button>
+      </div>
+    </Modal>
+  );
+}
+
 // ─── Custom Pagination ────────────────────────────────────────────────────────
 
 function CustomPagination({
@@ -622,6 +799,8 @@ export default function CTCTable() {
   const [orderDetailsOpen, setOrderDetailsOpen] = useState(false);
   const [assignOpen, setAssignOpen] = useState(false);
   const [viewOpen, setViewOpen] = useState(false);
+  const [addClerkOpen, setAddClerkOpen] = useState(false);
+  const [createTagOpen, setCreateTagOpen] = useState(false);
 
   function handleTagsChange(rowKey: string, newTags: TagItem[]) {
     setData((prev) => prev.map((row) => (row.key === rowKey ? { ...row, tags: newTags } : row)));
@@ -739,9 +918,14 @@ export default function CTCTable() {
     {
       title: "TAGS / NOTE",
       key: "tags",
-      width: 220,
+      width: 200,
       render: (_: unknown, record: OrderRecord) => (
-        <TagCell rowKey={record.key} tags={record.tags} onTagsChange={handleTagsChange} />
+        <TagCell
+          rowKey={record.key}
+          tags={record.tags}
+          onTagsChange={handleTagsChange}
+          onCreateTag={() => setCreateTagOpen(true)}
+        />
       ),
     },
     {
@@ -768,8 +952,10 @@ export default function CTCTable() {
   return (
     <>
       <OrderDetailsModal open={orderDetailsOpen} onClose={() => setOrderDetailsOpen(false)} />
-      <AssignPersonnelModal open={assignOpen} onClose={() => setAssignOpen(false)} />
+      <AssignPersonnelModal open={assignOpen} onClose={() => setAssignOpen(false)} onAddNew={() => setAddClerkOpen(true)} />
       <ViewOrderModal open={viewOpen} onClose={() => setViewOpen(false)} />
+      <AddClerkModal open={addClerkOpen} onClose={() => setAddClerkOpen(false)} />
+      <CreateNewTagModal open={createTagOpen} onClose={() => setCreateTagOpen(false)} />
 
       <div className="relative bg-white rounded-lg border border-[#E9ECEF] overflow-hidden">
         <Table<OrderRecord>
